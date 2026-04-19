@@ -1,0 +1,104 @@
+// Prisma schema for Khal Asher U'Moshe synagogue app
+// Learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Prayer time profile: one of WEEKDAY, FRIDAY, SHABBAT, HOLIDAY
+// Each profile contains multiple prayers (shacharit, mincha, arvit, etc.)
+model PrayerProfile {
+  id        String   @id @default(cuid())
+  type      String   @unique // "WEEKDAY" | "FRIDAY" | "SHABBAT" | "HOLIDAY"
+  name      String // e.g. "ימי חול", "יום שישי", "שבת", "חגים"
+  prayers   Prayer[]
+  updatedAt DateTime @updatedAt
+}
+
+model Prayer {
+  id        String        @id @default(cuid())
+  profileId String
+  profile   PrayerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  name      String // "שחרית", "מנחה", "ערבית" וכו'
+  time      String // "06:30" (HH:MM)
+  order     Int // סדר הצגה
+  notes     String? // הערה אופציונלית
+
+  @@index([profileId])
+}
+
+// Event: either a lesson (LESSON) or a community activity (COMMUNITY)
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  type        String // "LESSON" | "COMMUNITY"
+  date        DateTime
+  endDate     DateTime?
+  location    String?
+  lecturer    String? // שם המרצה / אחראי
+  isRecurring Boolean  @default(false)
+  recurrence  String? // "weekly" | "monthly" | null
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([date])
+  @@index([type])
+}
+
+// Manual halacha time override for a specific date
+// Used when gabbaim want to adjust auto-calculated times
+model HalachaOverride {
+  id             String   @id @default(cuid())
+  date           DateTime @unique
+  sunrise        String?
+  sunset         String?
+  candleLighting String?
+  havdalah       String?
+  note           String? // סיבה להתאמה ידנית
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+// Cached halacha times fetched from Hebcal API
+// Refreshed daily by cron job
+model HalachaCache {
+  id             String   @id @default(cuid())
+  date           DateTime @unique
+  sunrise        String?
+  sunset         String?
+  candleLighting String?
+  havdalah       String?
+  hebrewDate     String? // e.g. "יז ניסן התשפ״ו"
+  parasha        String? // פרשת השבוע
+  holiday        String? // שם החג אם יש
+  fetchedAt      DateTime @default(now())
+}
+
+// Singleton: synagogue settings and admin passcode
+model Settings {
+  id             String   @id @default("singleton")
+  synagogueName  String   @default("בית הכנסת הספרדי המרכזי היכל אשר ומשה")
+  address        String?  @default("רמת בית שמש ד׳, בית שמש")
+  latitude       Float    @default(31.7489) // רמת בית שמש ד׳
+  longitude      Float    @default(34.9850)
+  timezone       String   @default("Asia/Jerusalem")
+  donationUrl    String?
+  donationNote   String? // מלל נוסף שמוצג ליד כפתור התרומות (אופציונלי)
+  // Bank transfer details (optional — displayed below the donation button)
+  bankName       String?
+  bankBranch     String?
+  bankAccount    String?
+  bankAccountName String?
+  youtubeUrl     String? // YouTube channel URL
+  adminPasscode  String // bcrypt hashed
+  contactPhone   String?
+  contactEmail   String?
+  aboutText      String?
+  updatedAt      DateTime @updatedAt
+}
