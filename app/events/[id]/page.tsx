@@ -17,15 +17,18 @@ export default async function EventDetailPage({ params }: Props) {
   if (!event) notFound();
 
   const date = new Date(event.date);
+  const tz = "Asia/Jerusalem";
   const dateStr = new Intl.DateTimeFormat("he-IL", {
     weekday: "long",
     day: "numeric",
     month: "long",
     year: "numeric",
+    timeZone: tz,
   }).format(date);
   const timeStr = new Intl.DateTimeFormat("he-IL", {
     hour: "2-digit",
     minute: "2-digit",
+    timeZone: tz,
   }).format(date);
 
   return (
@@ -74,11 +77,13 @@ export default async function EventDetailPage({ params }: Props) {
             <div className="flex gap-3">
               <dt className="text-[var(--muted)] w-20">🔁 תכיפות:</dt>
               <dd className="font-medium">
-                {event.recurrence === "weekly"
-                  ? "שבועי"
-                  : event.recurrence === "monthly"
-                    ? "חודשי"
-                    : event.recurrence}
+                {event.recurrence === "daily"
+                  ? "יומי"
+                  : event.recurrence === "weekly"
+                    ? "שבועי"
+                    : event.recurrence === "monthly"
+                      ? "חודשי"
+                      : event.recurrence}
               </dd>
             </div>
           )}

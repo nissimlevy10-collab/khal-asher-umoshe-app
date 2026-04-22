@@ -20,14 +20,17 @@ const typeBadgeColor = (t: string) =>
     : "bg-[var(--accent)] text-[var(--primary)]";
 
 function formatHebrewDateTime(date: Date) {
+  const tz = "Asia/Jerusalem";
   const dateStr = new Intl.DateTimeFormat("he-IL", {
     weekday: "long",
     day: "numeric",
     month: "long",
+    timeZone: tz,
   }).format(date);
   const timeStr = new Intl.DateTimeFormat("he-IL", {
     hour: "2-digit",
     minute: "2-digit",
+    timeZone: tz,
   }).format(date);
   return { dateStr, timeStr };
 }
