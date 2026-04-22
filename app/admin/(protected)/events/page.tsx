@@ -61,6 +61,7 @@ export default async function AdminEventsPage() {
                         year: "numeric",
                         hour: "2-digit",
                         minute: "2-digit",
+                        timeZone: "Asia/Jerusalem",
                       })}
                     </td>
                     <td className="px-4 py-3 text-[var(--muted)]">
