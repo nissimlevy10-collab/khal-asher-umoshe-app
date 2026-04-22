@@ -183,6 +183,7 @@ export function EventForm({ initial }: { initial?: EventFormData }) {
             onChange={(e) => setRecurrence(e.target.value)}
             className={`${fieldClass} w-auto`}
           >
+            <option value="daily">יומי</option>
             <option value="weekly">שבועי</option>
             <option value="monthly">חודשי</option>
           </select>
