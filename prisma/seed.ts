@@ -48,12 +48,13 @@ async function main() {
       type: "WEEKDAY",
       name: "ימי חול",
       prayers: [
-        { name: "שחרית א׳", time: "05:30", order: 1 },
-        { name: "שחרית ב׳", time: "06:30", order: 2 },
-        { name: "שחרית ג׳", time: "08:00", order: 3 },
-        { name: "מנחה", time: "13:15", order: 4 },
-        { name: "ערבית", time: "20:00", order: 5 },
-      ],
+        // ימי חול — יתווספו על ידי הגבאים דרך הדשבורד כשיפתח מניין
+        // כאשר יוסיפו: מנחה = zmanimBase:"sunset", offsetMinutes:-20 (מנחה קטנה)
+        // ערבית = מיד אחרי מנחה (אותו זמן)
+      ] as Array<{
+        name: string; time: string; order: number;
+        notes?: string; zmanimBase?: string; offsetMinutes?: number;
+      }>,
     },
     {
       type: "FRIDAY",
@@ -61,17 +62,73 @@ async function main() {
       prayers: [
         { name: "שחרית א׳", time: "05:30", order: 1 },
         { name: "שחרית ב׳", time: "07:00", order: 2 },
-        { name: "מנחה וקבלת שבת", time: "19:00", order: 3, notes: "תלוי בזמן הדלקת נרות" },
+        {
+          name: "מנחה וקבלת שבת",
+          time: "19:00",
+          order: 3,
+          notes: "25 דקות לפני שקיעה",
+          zmanimBase: "sunset",
+          offsetMinutes: -25,
+        },
       ],
     },
     {
       type: "SHABBAT",
       name: "שבת",
       prayers: [
-        { name: "שחרית", time: "08:00", order: 1 },
-        { name: "מנחה גדולה", time: "13:00", order: 2 },
-        { name: "מנחה קטנה", time: "18:30", order: 3 },
-        { name: "ערבית מוצ״ש", time: "20:15", order: 4 },
+        {
+          name: "שחרית מניין א׳ נץ החמה",
+          time: "05:00",
+          order: 1,
+          notes: "שעה לפני הנץ המישורי",
+          zmanimBase: "seaLevelSunrise",
+          offsetMinutes: -60,
+        },
+        {
+          name: "שחרית מניין ב׳",
+          time: "08:00",
+          order: 2,
+        },
+        {
+          name: "תהילים לבנים",
+          time: "15:30",
+          order: 3,
+          notes: "3.5 שעות לפני שקיעה",
+          zmanimBase: "sunset",
+          offsetMinutes: -210,
+        },
+        {
+          name: "לימוד אבות ובנים",
+          time: "16:30",
+          order: 4,
+          notes: "2 שעות לפני שקיעה",
+          zmanimBase: "sunset",
+          offsetMinutes: -120,
+        },
+        {
+          name: "מנחה",
+          time: "17:30",
+          order: 5,
+          notes: "שעה לפני שקיעה",
+          zmanimBase: "sunset",
+          offsetMinutes: -60,
+        },
+        {
+          name: "ערבית מניין א׳ מוצ״ש",
+          time: "20:00",
+          order: 6,
+          notes: "בצאת השבת",
+          zmanimBase: "tzeit",
+          offsetMinutes: 0,
+        },
+        {
+          name: "ערבית מניין ב׳",
+          time: "20:15",
+          order: 7,
+          notes: "רבע שעה אחרי צאת השבת",
+          zmanimBase: "tzeit",
+          offsetMinutes: 15,
+        },
       ],
     },
     {
@@ -79,8 +136,22 @@ async function main() {
       name: "חגים",
       prayers: [
         { name: "שחרית", time: "08:00", order: 1 },
-        { name: "מנחה", time: "18:30", order: 2 },
-        { name: "ערבית", time: "20:00", order: 3 },
+        {
+          name: "מנחה",
+          time: "17:30",
+          order: 2,
+          notes: "שעה לפני שקיעה",
+          zmanimBase: "sunset",
+          offsetMinutes: -60,
+        },
+        {
+          name: "ערבית",
+          time: "20:00",
+          order: 3,
+          notes: "מיד אחרי מנחה",
+          zmanimBase: "tzeit",
+          offsetMinutes: 0,
+        },
       ],
     },
   ];
@@ -102,6 +173,8 @@ async function main() {
               time: p.time,
               order: p.order,
               notes: p.notes ?? null,
+              zmanimBase: p.zmanimBase ?? null,
+              offsetMinutes: p.offsetMinutes ?? 0,
             })),
           },
         },
@@ -117,6 +190,8 @@ async function main() {
               time: p.time,
               order: p.order,
               notes: p.notes ?? null,
+              zmanimBase: p.zmanimBase ?? null,
+              offsetMinutes: p.offsetMinutes ?? 0,
             })),
           },
         },

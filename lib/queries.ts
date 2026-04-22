@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { getDayType, type DayType, type DayInfo } from "@/lib/day-type";
+import { resolvePrayers } from "@/lib/zmanim-calc";
 
 /**
  * Load the synagogue settings (singleton).
@@ -25,27 +26,66 @@ export async function getCurrentDayInfo(now = new Date()): Promise<DayInfo> {
 
 /**
  * Load the PrayerProfile matching the given day type, with prayers ordered.
+ * Automatically resolves zmanim-based prayer times for the given date.
  */
-export async function getPrayerProfile(type: DayType) {
-  return prisma.prayerProfile.findUnique({
-    where: { type },
-    include: {
-      prayers: {
-        orderBy: { order: "asc" },
-      },
-    },
-  });
+export async function getPrayerProfile(type: DayType, date = new Date()) {
+  const [profile, settings] = await Promise.all([
+    prisma.prayerProfile.findUnique({
+      where: { type },
+      include: { prayers: { orderBy: { order: "asc" } } },
+    }),
+    getSettings(),
+  ]);
+  if (!profile) return null;
+  return {
+    ...profile,
+    prayers: resolvePrayers(
+      profile.prayers,
+      date,
+      settings.latitude,
+      settings.longitude,
+      settings.timezone,
+    ),
+  };
 }
 
 /**
- * Load all prayer profiles (for the /zmanim page).
+ * Load all prayer profiles (for the /zmanim page), with zmanim times resolved.
+ * Uses "next occurrence" date per profile type so times are always relevant.
  */
-export async function getAllPrayerProfiles() {
-  return prisma.prayerProfile.findMany({
-    include: {
-      prayers: { orderBy: { order: "asc" } },
-    },
-  });
+export async function getAllPrayerProfiles(date = new Date()) {
+  const [profiles, settings] = await Promise.all([
+    prisma.prayerProfile.findMany({
+      include: { prayers: { orderBy: { order: "asc" } } },
+    }),
+    getSettings(),
+  ]);
+
+  // For each profile, pick the next date that matches that day type
+  function nextOccurrence(targetDow: number, from: Date): Date {
+    const d = new Date(from);
+    const diff = (targetDow - d.getDay() + 7) % 7;
+    d.setDate(d.getDate() + diff);
+    return d;
+  }
+
+  const profileDate: Record<string, Date> = {
+    WEEKDAY: nextOccurrence(1, date), // Monday
+    FRIDAY: nextOccurrence(5, date),  // Friday
+    SHABBAT: nextOccurrence(6, date), // Saturday
+    HOLIDAY: date,                    // Use today for holiday
+  };
+
+  return profiles.map((p) => ({
+    ...p,
+    prayers: resolvePrayers(
+      p.prayers,
+      profileDate[p.type] ?? date,
+      settings.latitude,
+      settings.longitude,
+      settings.timezone,
+    ),
+  }));
 }
 
 /**

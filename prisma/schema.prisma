@@ -24,10 +24,12 @@ model Prayer {
   id        String        @id @default(cuid())
   profileId String
   profile   PrayerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  name      String // "שחרית", "מנחה", "ערבית" וכו'
-  time      String // "06:30" (HH:MM)
-  order     Int // סדר הצגה
-  notes     String? // הערה אופציונלית
+  name          String  // "שחרית", "מנחה", "ערבית" וכו'
+  time          String  // "06:30" (HH:MM) — fallback / manual time
+  order         Int     // סדר הצגה
+  notes         String? // הערה אופציונלית
+  zmanimBase    String? // "sunset" | "seaLevelSunrise" | "tzeit" | "chatzot" — null = manual
+  offsetMinutes Int     @default(0) // דקות + אחרי / - לפני הבסיס
 
   @@index([profileId])
 }

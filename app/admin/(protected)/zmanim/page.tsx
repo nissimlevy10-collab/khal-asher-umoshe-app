@@ -35,6 +35,8 @@ export default async function AdminZmanimPage() {
             name: p.name,
             time: p.time,
             notes: p.notes,
+            zmanimBase: p.zmanimBase,
+            offsetMinutes: p.offsetMinutes,
           }))}
         />
       ))}

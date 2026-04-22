@@ -5,6 +5,8 @@ type PrayerInput = {
   name: string;
   time: string;
   notes?: string | null;
+  zmanimBase?: string | null;
+  offsetMinutes?: number | null;
 };
 
 type Body = {
@@ -45,6 +47,8 @@ export async function PUT(req: Request) {
               time: p.time,
               order: i + 1,
               notes: p.notes ?? null,
+              zmanimBase: p.zmanimBase ?? null,
+              offsetMinutes: p.offsetMinutes ?? 0,
             })),
         },
       },
