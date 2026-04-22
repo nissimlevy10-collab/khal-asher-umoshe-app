@@ -17,6 +17,7 @@ type Body = {
   youtubeUrl?: string | null;
   contactPhone?: string | null;
   contactEmail?: string | null;
+  contactName?: string | null;
   aboutText?: string | null;
   newPasscode?: string | null;
 };
@@ -44,6 +45,7 @@ export async function PUT(req: Request) {
   if (body.youtubeUrl !== undefined) data.youtubeUrl = body.youtubeUrl;
   if (body.contactPhone !== undefined) data.contactPhone = body.contactPhone;
   if (body.contactEmail !== undefined) data.contactEmail = body.contactEmail;
+  if (body.contactName !== undefined) data.contactName = body.contactName;
   if (body.aboutText !== undefined) data.aboutText = body.aboutText;
 
   if (body.newPasscode) {

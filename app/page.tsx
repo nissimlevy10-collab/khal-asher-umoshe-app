@@ -78,13 +78,16 @@ export default async function HomePage() {
             compact
           />
 
-          {(settings.address || settings.contactPhone) && (
+          {(settings.address || settings.contactPhone || settings.contactName) && (
             <div className="bg-[var(--surface)] rounded-lg p-5 border border-[var(--border)] text-sm">
               <h3 className="font-bold text-[var(--primary)] mb-2">
                 📍 פרטי יצירת קשר
               </h3>
               {settings.address && (
                 <p className="text-[var(--muted)] mb-1">{settings.address}</p>
+              )}
+              {settings.contactName && (
+                <p className="text-[var(--muted)] mb-1">👤 {settings.contactName}</p>
               )}
               {settings.contactPhone && (
                 <p className="text-[var(--muted)]">📞 {settings.contactPhone}</p>

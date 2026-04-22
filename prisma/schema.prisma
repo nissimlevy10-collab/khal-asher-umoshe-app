@@ -101,6 +101,7 @@ model Settings {
   adminPasscode  String // bcrypt hashed
   contactPhone   String?
   contactEmail   String?
+  contactName    String? // שם הרב / גבאי ראשי
   aboutText      String?
   updatedAt      DateTime @updatedAt
 }

@@ -18,6 +18,7 @@ export type SettingsFormData = {
   youtubeUrl: string | null;
   contactPhone: string | null;
   contactEmail: string | null;
+  contactName: string | null;
   aboutText: string | null;
 };
 
@@ -39,6 +40,7 @@ export function SettingsForm({ initial }: { initial: SettingsFormData }) {
   const [youtubeUrl, setYoutubeUrl] = useState(initial.youtubeUrl ?? "");
   const [contactPhone, setContactPhone] = useState(initial.contactPhone ?? "");
   const [contactEmail, setContactEmail] = useState(initial.contactEmail ?? "");
+  const [contactName, setContactName] = useState(initial.contactName ?? "");
   const [aboutText, setAboutText] = useState(initial.aboutText ?? "");
   const [newPasscode, setNewPasscode] = useState("");
   const [confirmPasscode, setConfirmPasscode] = useState("");
@@ -83,6 +85,7 @@ export function SettingsForm({ initial }: { initial: SettingsFormData }) {
           youtubeUrl: youtubeUrl.trim() || null,
           contactPhone: contactPhone.trim() || null,
           contactEmail: contactEmail.trim() || null,
+          contactName: contactName.trim() || null,
           aboutText: aboutText.trim() || null,
           newPasscode: newPasscode || null,
         }),
@@ -269,6 +272,17 @@ export function SettingsForm({ initial }: { initial: SettingsFormData }) {
 
       <section className="bg-[var(--surface)] rounded-lg border border-[var(--border)] p-5 space-y-4">
         <h2 className="text-lg font-bold text-[var(--primary)]">יצירת קשר ורשתות חברתיות</h2>
+
+        <div>
+          <label className={labelClass}>שם הרב / גבאי ראשי</label>
+          <input
+            type="text"
+            value={contactName}
+            onChange={(e) => setContactName(e.target.value)}
+            placeholder="הרב ישראל ישראלי"
+            className={fieldClass}
+          />
+        </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
