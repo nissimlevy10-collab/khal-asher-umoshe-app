@@ -5,13 +5,14 @@ import type { DayType } from "@/lib/day-type";
 
 export const dynamic = "force-dynamic";
 
-function formatTime(iso?: string): string | undefined {
+function formatTime(iso?: string, timezone = "Asia/Jerusalem"): string | undefined {
   if (!iso) return undefined;
   try {
     const d = new Date(iso);
     return d.toLocaleTimeString("he-IL", {
       hour: "2-digit",
       minute: "2-digit",
+      timeZone: timezone,
     });
   } catch {
     return undefined;
@@ -79,7 +80,7 @@ export default async function ZmanimPage() {
               ["שקיעה", zmanim.times.sunset],
               ["צאת הכוכבים", zmanim.times.tzeit7083deg],
             ].map(([label, val]) => {
-              const formatted = formatTime(val ?? undefined);
+              const formatted = formatTime(val ?? undefined, settings.timezone);
               return (
                 <div
                   key={label}
