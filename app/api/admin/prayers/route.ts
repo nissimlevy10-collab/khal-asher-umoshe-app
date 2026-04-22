@@ -41,7 +41,7 @@ export async function PUT(req: Request) {
       data: {
         prayers: {
           create: body.prayers
-            .filter((p) => p.name && p.time)
+            .filter((p) => p.name && (p.time || p.zmanimBase))
             .map((p, i) => ({
               name: p.name,
               time: p.time,
