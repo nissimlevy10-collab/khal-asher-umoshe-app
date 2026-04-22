@@ -8,7 +8,7 @@
  * Uses the Shabbat API candle lighting time as the boundary for Shabbat.
  */
 
-import { HDate, HebrewCalendar, Location, flags } from "@hebcal/core";
+import { HDate, HebrewCalendar, Location, TimedEvent, flags } from "@hebcal/core";
 
 export type DayType = "WEEKDAY" | "FRIDAY" | "SHABBAT" | "HOLIDAY";
 
@@ -78,7 +78,7 @@ export function getDayType(
   if (dow === 6) {
     // If we have a havdalah event today and now is past it → weekday (Saturday night)
     if (havdalahEvent) {
-      const havdalahTime = havdalahEvent.eventTime;
+      const havdalahTime = (havdalahEvent as TimedEvent).eventTime;
       if (havdalahTime && now >= havdalahTime) {
         return {
           type: "WEEKDAY",
@@ -100,7 +100,7 @@ export function getDayType(
   if (dow === 5) {
     // If we have a candle lighting event today and now is past it → Shabbat
     if (candleEvent) {
-      const candleTime = candleEvent.eventTime;
+      const candleTime = (candleEvent as TimedEvent).eventTime;
       if (candleTime && now >= candleTime) {
         return {
           type: "SHABBAT",

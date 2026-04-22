@@ -9,7 +9,8 @@ const globalForPrisma = globalThis as unknown as {
 function createPrismaClient(): PrismaClient {
   const connectionString = process.env.DATABASE_URL!;
   // noPreparedStatements: required for Supabase transaction pooler (PgBouncer)
-  const adapter = new PrismaPg({ connectionString }, { noPreparedStatements: true });
+  // No statementNameGenerator = prepared statements are not cached (required for PgBouncer/Supabase)
+  const adapter = new PrismaPg({ connectionString });
   return new PrismaClient({ adapter });
 }
 

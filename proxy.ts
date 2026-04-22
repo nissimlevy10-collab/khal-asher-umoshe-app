@@ -15,7 +15,7 @@ async function verifyTokenEdge(token: string): Promise<boolean> {
   }
 }
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // Allow login page and auth API without authentication
