@@ -17,11 +17,8 @@ export async function Footer() {
             <br />
             {settings.address ?? "רמת בית שמש ד׳, בית שמש"}
           </p>
-          {settings.contactName && (
-            <p className="mt-2 opacity-90">👤 {settings.contactName}</p>
-          )}
           {settings.contactPhone && (
-            <p className="mt-1 opacity-90">📞 {settings.contactPhone}</p>
+            <p className="mt-2 opacity-90">📞 {settings.contactPhone}</p>
           )}
           {settings.contactEmail && (
             <p className="mt-1 opacity-90">✉ {settings.contactEmail}</p>
